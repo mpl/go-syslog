@@ -174,6 +174,13 @@ func (p *Parser) parseTimestamp() (time.Time, error) {
 		}
 
 		sub = p.buff[p.cursor : tsFmtLen+p.cursor]
+		if tsFmt == time.RFC3339 {
+			parts := bytes.Split(sub, []byte(" "))
+			if len(parts) > 1 {
+				sub = parts[0]
+				tsFmtLen = len(sub)
+			}
+		}
 		ts, err = time.ParseInLocation(tsFmt, string(sub), p.location)
 		if err == nil {
 			found = true
